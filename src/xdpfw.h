@@ -41,29 +41,8 @@ struct tcpopts
     __u16 dport;
 
     // TCP flags.
-    unsigned int do_urg : 1;
-    unsigned int urg : 1;
-
-    unsigned int do_ack : 1;
-    unsigned int ack : 1;
-
-    unsigned int do_rst : 1;
-    unsigned int rst : 1;
-
-    unsigned int do_psh : 1;
-    unsigned int psh : 1;
-
-    unsigned int do_syn : 1;
-    unsigned int syn : 1;
-
-    unsigned int do_fin : 1;
-    unsigned int fin : 1;
-
-    unsigned int do_ece : 1;
-    unsigned int ece : 1;
-
-    unsigned int do_cwr : 1;
-    unsigned int cwr : 1;
+    __u32 enabled_flags;
+    __u32 expected_flags;
 };
 
 struct udpopts
