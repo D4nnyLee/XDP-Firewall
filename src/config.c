@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <libconfig.h>
 #include <string.h>
+#include <linux/tcp.h>
 #include <linux/types.h>
 
 #include <arpa/inet.h>
@@ -64,14 +65,7 @@ void setcfgdefaults(struct config *cfg)
         cfg->filters[i].tcpopts.enabled = 0;
         cfg->filters[i].tcpopts.do_dport = 0;
         cfg->filters[i].tcpopts.do_dport = 0;
-        cfg->filters[i].tcpopts.do_urg = 0;
-        cfg->filters[i].tcpopts.do_ack = 0;
-        cfg->filters[i].tcpopts.do_rst = 0;
-        cfg->filters[i].tcpopts.do_psh = 0;
-        cfg->filters[i].tcpopts.do_syn = 0;
-        cfg->filters[i].tcpopts.do_fin = 0;
-        cfg->filters[i].tcpopts.do_ece = 0;
-        cfg->filters[i].tcpopts.do_cwr = 0;
+        cfg->filters[i].tcpopts.enabled_flags = 0;
 
         cfg->filters[i].udpopts.enabled = 0;
         cfg->filters[i].udpopts.do_sport = 0;
@@ -377,8 +371,8 @@ int readcfg(struct config *cfg)
 
         if (config_setting_lookup_bool(filter, "tcp_urg", &tcpurg))
         {
-            cfg->filters[i].tcpopts.urg = tcpurg;
-            cfg->filters[i].tcpopts.do_urg = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcpurg & TCP_FLAG_URG;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_URG;
         }
 
         // ACK flag.
@@ -386,18 +380,17 @@ int readcfg(struct config *cfg)
 
         if (config_setting_lookup_bool(filter, "tcp_ack", &tcpack))
         {
-            cfg->filters[i].tcpopts.ack = tcpack;
-            cfg->filters[i].tcpopts.do_ack = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcpack & TCP_FLAG_ACK;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_ACK;
         }
-        
 
         // RST flag.
         int tcprst;
 
         if (config_setting_lookup_bool(filter, "tcp_rst", &tcprst))
         {
-            cfg->filters[i].tcpopts.rst = tcprst;
-            cfg->filters[i].tcpopts.do_rst = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcprst & TCP_FLAG_RST;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_RST;
         }
 
         // PSH flag.
@@ -405,8 +398,8 @@ int readcfg(struct config *cfg)
 
         if (config_setting_lookup_bool(filter, "tcp_psh", &tcppsh))
         {
-            cfg->filters[i].tcpopts.psh = tcppsh;
-            cfg->filters[i].tcpopts.do_psh = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcppsh & TCP_FLAG_PSH;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_PSH;
         }
 
         // SYN flag.
@@ -414,8 +407,8 @@ int readcfg(struct config *cfg)
 
         if (config_setting_lookup_bool(filter, "tcp_syn", &tcpsyn))
         {
-            cfg->filters[i].tcpopts.syn = tcpsyn;
-            cfg->filters[i].tcpopts.do_syn = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcpsyn & TCP_FLAG_SYN;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_SYN;
         }
 
         // FIN flag.
@@ -423,8 +416,8 @@ int readcfg(struct config *cfg)
 
         if (config_setting_lookup_bool(filter, "tcp_fin", &tcpfin))
         {
-            cfg->filters[i].tcpopts.fin = tcpfin;
-            cfg->filters[i].tcpopts.do_fin = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcpfin & TCP_FLAG_FIN;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_FIN;
         }
 
         // ECE flag.
@@ -432,8 +425,8 @@ int readcfg(struct config *cfg)
 
         if (config_setting_lookup_bool(filter, "tcp_ece", &tcpece))
         {
-            cfg->filters[i].tcpopts.ece = tcpece;
-            cfg->filters[i].tcpopts.do_ece = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcpece & TCP_FLAG_ECE;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_ECE;
         }
 
         // CWR flag.
@@ -441,8 +434,8 @@ int readcfg(struct config *cfg)
 
         if (config_setting_lookup_bool(filter, "tcp_cwr", &tcpcwr))
         {
-            cfg->filters[i].tcpopts.cwr = tcpcwr;
-            cfg->filters[i].tcpopts.do_cwr = 1;
+            cfg->filters[i].tcpopts.expected_flags |= -tcpcwr & TCP_FLAG_CWR;
+            cfg->filters[i].tcpopts.enabled_flags |= TCP_FLAG_CWR;
         }
 
         /* UDP options */

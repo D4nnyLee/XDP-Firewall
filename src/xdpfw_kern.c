@@ -476,50 +476,8 @@ int xdp_prog_main(struct xdp_md *ctx)
                 continue;
             }
 
-            // URG flag.
-            if (filter->tcpopts.do_urg && filter->tcpopts.urg != tcph->urg)
-            {
-                continue;
-            }
-
-            // ACK flag.
-            if (filter->tcpopts.do_ack && filter->tcpopts.ack != tcph->ack)
-            {
-                continue;
-            }
-
-            // RST flag.
-            if (filter->tcpopts.do_rst && filter->tcpopts.rst != tcph->rst)
-            {
-                continue;
-            }
-
-            // PSH flag.
-            if (filter->tcpopts.do_psh && filter->tcpopts.psh != tcph->psh)
-            {
-                continue;
-            }
-
-            // SYN flag.
-            if (filter->tcpopts.do_syn && filter->tcpopts.syn != tcph->syn)
-            {
-                continue;
-            }
-
-            // FIN flag.
-            if (filter->tcpopts.do_fin && filter->tcpopts.fin != tcph->fin)
-            {
-                continue;
-            }
-
-            // ECE flag.
-            if (filter->tcpopts.do_ece && filter->tcpopts.ece != tcph->ece)
-            {
-                continue;
-            }
-
-            // CWR flag.
-            if (filter->tcpopts.do_cwr && filter->tcpopts.cwr != tcph->cwr)
+            // TCP flags.
+            if ((tcp_flag_word(tcph) & filter->tcpopts.enabled_flags) != filter->tcpopts.expected_flags)
             {
                 continue;
             }

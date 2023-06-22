@@ -4,6 +4,7 @@
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
+#include <linux/tcp.h>
 #include <linux/types.h>
 #include <time.h>
 #include <getopt.h>
@@ -414,14 +415,15 @@ int main(int argc, char *argv[])
             fprintf(stdout, "\t\tTCP Enabled => %d\n", cfg.filters[i].tcpopts.enabled);
             fprintf(stdout, "\t\tTCP Source Port => %d\n", cfg.filters[i].tcpopts.sport);
             fprintf(stdout, "\t\tTCP Destination Port => %d\n", cfg.filters[i].tcpopts.dport);
-            fprintf(stdout, "\t\tTCP URG Flag => %d\n", cfg.filters[i].tcpopts.urg);
-            fprintf(stdout, "\t\tTCP ACK Flag => %d\n", cfg.filters[i].tcpopts.ack);
-            fprintf(stdout, "\t\tTCP RST Flag => %d\n", cfg.filters[i].tcpopts.rst);
-            fprintf(stdout, "\t\tTCP PSH Flag => %d\n", cfg.filters[i].tcpopts.psh);
-            fprintf(stdout, "\t\tTCP SYN Flag => %d\n", cfg.filters[i].tcpopts.syn);
-            fprintf(stdout, "\t\tTCP FIN Flag => %d\n", cfg.filters[i].tcpopts.fin);
-            fprintf(stdout, "\t\tTCP ECE Flag => %d\n", cfg.filters[i].tcpopts.ece);
-            fprintf(stdout, "\t\tTCP CWR Flag => %d\n\n", cfg.filters[i].tcpopts.cwr);
+            fprintf(stdout, "\t\tTCP URG Flag => %d\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_URG));
+            fprintf(stdout, "\t\tTCP ACK Flag => %d\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_ACK));
+            fprintf(stdout, "\t\tTCP RST Flag => %d\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_RST));
+            fprintf(stdout, "\t\tTCP PSH Flag => %d\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_PSH));
+            fprintf(stdout, "\t\tTCP SYN Flag => %d\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_SYN));
+            fprintf(stdout, "\t\tTCP FIN Flag => %d\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_FIN));
+            fprintf(stdout, "\t\tTCP ECE Flag => %d\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_ECE));
+            fprintf(stdout, "\t\tTCP CWR Flag => %d\n\n", !!(cfg.filters[i].tcpopts.expected_flags & TCP_FLAG_CWR));
+
 
             // UDP Options.
             fprintf(stdout, "\tUDP Options\n");
